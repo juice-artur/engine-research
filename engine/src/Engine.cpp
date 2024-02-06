@@ -1,7 +1,9 @@
 #include "Engine.h"
+#include "Core\Log.h"
 
 JE_API bool Engine::Init()
 {
+	Log::Init();
 	window.Create("ExampleGame", 1280, 720);
 	if (!rendererFrontend.Initialize("GameName", &window));
 	{
@@ -17,6 +19,8 @@ JE_API void Engine::Tick()
 	float clock_frequency;
 	LARGE_INTEGER frequency;
 	LARGE_INTEGER start_time;
+
+
 
 	QueryPerformanceFrequency(&frequency);
 	clock_frequency = 1.0 / (float)frequency.QuadPart;

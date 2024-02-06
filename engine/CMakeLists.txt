@@ -38,6 +38,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../exter
 target_link_libraries(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../external/SDL2/lib/x64/SDL2.lib"
                                       "${CMAKE_SOURCE_DIR}/../external/SDL2/lib/x64/SDL2main.lib")
 
+add_subdirectory(../external/spdlog  ${CMAKE_CURRENT_BINARY_DIR}/spdlog)
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
+
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${CMAKE_SOURCE_DIR}/../external/SDL2/lib/x64/SDL2.dll"

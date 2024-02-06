@@ -1,5 +1,5 @@
 #include "WindowsWindow.h"
-#include <stdio.h>
+#include <Core\Log.h>
 
 WindowHandle_t WindowsWindow::GetHandle() const
 {
@@ -23,7 +23,7 @@ bool WindowsWindow::Create(const achar* InTitle, uint32 InWidth, uint32 InHeight
 {
 	if (sdlWindow)
 	{
-		printf("Warning: CWindowsWindow::Create: Window already created\n");
+		LOG_WARN("Warning: CWindowsWindow::Create: Window already created");
 		return true;
 	}
 
@@ -70,7 +70,7 @@ bool WindowsWindow::Create(const achar* InTitle, uint32 InWidth, uint32 InHeight
 	sdlWindow = SDL_CreateWindow(InTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, InWidth, InHeight, sdlFlags);
 	if (!sdlWindow)
 	{
-		printf("Error: Failed created window (%ix%i) with title '%s' and flags 0x%X. SDL error: %s", InWidth, InHeight, InTitle, InFlags, SDL_GetError());
+		LOG_ERROR("Error: Failed created window ({0}x{1}) with title '{2}' and flags {3}. SDL error: {4}", InWidth, InHeight, InTitle, InFlags, SDL_GetError());
 		return false;
 	}
 
@@ -79,6 +79,7 @@ bool WindowsWindow::Create(const achar* InTitle, uint32 InWidth, uint32 InHeight
 	SDL_VERSION(&sdlWindowInfo->version);
 	SDL_GetWindowWMInfo(sdlWindow, sdlWindowInfo);
 	handle = sdlWindowInfo->info.win.window;
+	LOG_INFO("Window with handle {0} successfully created", handle);
 
 	return true;
 }
@@ -104,7 +105,7 @@ void WindowsWindow::Close()
 	handle = nullptr;
 	bIsFullscreen = false;
 	bIsShowCursor = false;
-	printf("Window with handle %p closed\n", handle);
+	LOG_INFO("Window with handle {0} closed", handle);
 }
 
 void WindowsWindow::ShowCursor(bool InIsShowCursor)
