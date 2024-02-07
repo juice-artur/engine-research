@@ -4,7 +4,7 @@
 #include "SDL.h"
 #include <SDL_syswm.h>
 #include "Platform\Common\WindowEvent.h"
-class WindowsWindow : public CBaseWindow
+class WindowsWindow : public BaseWindow
 {
 public:
 	virtual WindowHandle_t GetHandle() const override;

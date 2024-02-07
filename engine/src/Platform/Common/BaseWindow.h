@@ -2,7 +2,7 @@
 #include "defines.h"
 #include "Types.h"
 #include "Platform\Common\WindowEvent.h"
-enum EStyleWindow
+enum StyleWindow
 {
 	SW_None = 0,							/**< No styles */
 	SW_Resizable = 1 << 0,						/**< Resizable window */
@@ -15,13 +15,13 @@ enum EStyleWindow
 	SW_Default = SW_Decorated | SW_Resizable	/**< Default style - combined decorated and resizable style  */
 };
 
-class CBaseWindow
+class BaseWindow
 {
 public:
 	/**
 	 * @brief Destructor
 	 */
-	virtual ~CBaseWindow() {}
+	virtual ~BaseWindow() {}
 
 	/**
 	 * @brief Create window

@@ -105,7 +105,7 @@ void WindowsWindow::Close()
 	handle = nullptr;
 	bIsFullscreen = false;
 	bIsShowCursor = false;
-	LOG_INFO("Window with handle {0} closed", handle);
+	LOG_TRACE("Window with handle {0} closed", handle);
 }
 
 void WindowsWindow::ShowCursor(bool InIsShowCursor)
