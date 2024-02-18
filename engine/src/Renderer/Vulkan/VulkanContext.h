@@ -1,6 +1,8 @@
 #pragma once
 
 #include "vulkan\vulkan.h"
+#include "Renderer\Vulkan\VulkanPlatform.h"
+#include "Devices\VulkanDevice.h"
 
 class VulkanContext
 {
@@ -8,7 +10,7 @@ public:
 	VulkanContext();
 	~VulkanContext();
 
-	bool Initialize();
+	bool Initialize(WindowHandle_t windowHandle);
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL VkDebugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
@@ -21,4 +23,6 @@ private:
 #if defined(_DEBUG)
 	VkDebugUtilsMessengerEXT debugMessenger;
 #endif
+	VkSurfaceKHR surface;
+	VulkanDevice device;
 };

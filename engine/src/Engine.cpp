@@ -10,7 +10,7 @@ JE_API bool Engine::Init()
 		return false;
 	}
 	
-	return 0;
+	return true;
 }
 
 JE_API void Engine::Tick()

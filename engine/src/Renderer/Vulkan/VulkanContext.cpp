@@ -1,7 +1,6 @@
 #include "VulkanContext.h"
 #include <Core\Log.h>
 #include <Platform\Common\Types.h>
-#include "Renderer\Vulkan\VulkanPlatform.h"
 #include "VulkanTypes.h"
 
 VulkanContext::VulkanContext()
@@ -11,6 +10,8 @@ VulkanContext::VulkanContext()
 
 VulkanContext::~VulkanContext()
 {
+    LOG_TRACE("Destroying Vulkan surface...");
+    vkDestroySurfaceKHR(instance, surface, allocator);
 #if defined(_DEBUG)
     LOG_TRACE("Destroying Vulkan debugger...");
     if (debugMessenger) {
@@ -23,7 +24,7 @@ VulkanContext::~VulkanContext()
     vkDestroyInstance(instance, allocator);
 }
 
-bool VulkanContext::Initialize()
+bool VulkanContext::Initialize(WindowHandle_t windowHandle)
 {
     allocator = nullptr;
 
@@ -113,6 +114,18 @@ bool VulkanContext::Initialize()
     LOG_INFO("Vulkan debugger created.");
 #endif
 
+    LOG_TRACE("Creating Vulkan surface...");
+    surface = VK_Plat_CreateSurfaceKHR(instance, windowHandle);
+    if (surface == VK_NULL_HANDLE)
+    {
+        return false;
+    }
+    LOG_TRACE("Vulkan surface created.");
+    if (!device.Create(instance, surface))
+    {
+        LOG_CRITICAL("Device dosen`t create...");
+        return false;
+    }
     LOG_INFO("Vulkan renderer initialized successfully.");
     return true;
 }

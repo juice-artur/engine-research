@@ -13,7 +13,7 @@ VulkanBackend::~VulkanBackend()
 bool VulkanBackend::Initialize(const char* application_name, BaseWindow* window)
 {
 	context = new VulkanContext();
-	if(!context->Initialize())
+	if(!context->Initialize(window->GetHandle()))
 	{
 		return false;
 	}
