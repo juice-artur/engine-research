@@ -5,11 +5,12 @@
 
 VulkanContext::VulkanContext()
 {
-
+    device = new VulkanDevice();
 }
 
 VulkanContext::~VulkanContext()
 {
+    delete device;
     LOG_TRACE("Destroying Vulkan surface...");
     vkDestroySurfaceKHR(instance, surface, allocator);
 #if defined(_DEBUG)
@@ -121,7 +122,8 @@ bool VulkanContext::Initialize(WindowHandle_t windowHandle)
         return false;
     }
     LOG_TRACE("Vulkan surface created.");
-    if (!device.Create(instance, surface))
+
+    if (!device->Create(instance, surface, *allocator))
     {
         LOG_CRITICAL("Device dosen`t create...");
         return false;

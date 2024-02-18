@@ -6,12 +6,12 @@
 class VulkanDevice
 {
 public:
-	bool Create(VkInstance& instance, VkSurfaceKHR& surface);
+	bool Create(VkInstance& instance, VkSurfaceKHR& surface, VkAllocationCallbacks& allocator);
 	~VulkanDevice();
 
 private:
-	VkPhysicalDevice _physicalDevice = VK_NULL_HANDLE;
-    VkDevice logicalDevice;
+	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+    VkDevice logicalDevice = VK_NULL_HANDLE;
     VulkanSwapchainSupportInfo swapchainSupport;
     int32 graphicsQueueIndex;
     int32 presentQueueIndex;
@@ -20,12 +20,19 @@ private:
     VkPhysicalDeviceProperties properties;
     VkPhysicalDeviceFeatures features;
     VkPhysicalDeviceMemoryProperties memory;
+
+    VkQueue graphicsQueue;
+    VkQueue presentQueue;
+    VkQueue transferQueue;
+
+    VkAllocationCallbacks* allocator;
+
 	bool SelectPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surface);
     bool PhysicalDeviceMeetsRequirements(
         VkPhysicalDevice& device, VkSurfaceKHR& surface, const VkPhysicalDeviceProperties* properties, const VkPhysicalDeviceFeatures* features, VulkanPhysicalDeviceQueueFamilyInfo* queueInfo, const VulkanPhysicalDeviceRequirements* requirements);
 
     void VulkanDeviceQuerySwapchainSupport(
-        VkPhysicalDevice physical_device,
+        VkPhysicalDevice physicalDev,
         VkSurfaceKHR surface,
         VulkanSwapchainSupportInfo* outSupportInfo);
 };

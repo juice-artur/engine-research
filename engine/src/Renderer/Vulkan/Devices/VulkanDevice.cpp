@@ -1,9 +1,10 @@
 #include "VulkanDevice.h"
 
 
-bool VulkanDevice::Create(VkInstance& instance, VkSurfaceKHR& surface)
+bool VulkanDevice::Create(VkInstance& instance, VkSurfaceKHR& surface, VkAllocationCallbacks& allocator)
 {
-	if(!SelectPhysicalDevice(instance, surface))
+	this->allocator = &allocator;
+	if (!SelectPhysicalDevice(instance, surface))
 	{
 		return false;
 	}
@@ -11,8 +12,14 @@ bool VulkanDevice::Create(VkInstance& instance, VkSurfaceKHR& surface)
 	return true;
 }
 
+
+
 VulkanDevice::~VulkanDevice()
 {
+	LOG_TRACE("Destroying logical device...");
+	if (logicalDevice) {
+		vkDestroyDevice(logicalDevice, allocator);
+	}
 }
 
 bool VulkanDevice::SelectPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surface)
@@ -93,7 +100,7 @@ bool VulkanDevice::SelectPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surf
 				}
 			}
 
-			_physicalDevice = physicalDevices[i];
+			physicalDevice = physicalDevices[i];
 			graphicsQueueIndex = queueInfo.graphicsFamilyIndex;
 			presentQueueIndex = queueInfo.presentFamilyIndex;
 			transferQueueIndex = queueInfo.transferFamilyIndex;
@@ -102,10 +109,86 @@ bool VulkanDevice::SelectPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surf
 	}
 
 	// Ensure a device was selected
-	if (!_physicalDevice) {
+	if (!physicalDevice) {
 		LOG_CRITICAL("No physical devices were found which meet the requirements.");
 		return false;
 	}
+
+	LOG_TRACE("Creating logical device...");
+
+	bool presentSharesGraphicsQueue = graphicsQueueIndex == presentQueueIndex;
+	bool transferSharesGraphicsQueue = graphicsQueueIndex == transferQueueIndex;
+	uint32 indexCount = 1;
+	if (!presentSharesGraphicsQueue) {
+		indexCount++;
+	}
+	if (!transferSharesGraphicsQueue) {
+		indexCount++;
+	}
+	std::vector<uint32> indices(indexCount);
+	uint16 index = 0;
+	indices[index++] = graphicsQueueIndex;
+	if (!presentSharesGraphicsQueue) {
+		indices[index++] = presentQueueIndex;
+	}
+	if (!transferSharesGraphicsQueue) {
+		indices[index++] = transferQueueIndex;
+	}
+
+	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos(indexCount);
+	for (uint32 i = 0; i < indexCount; ++i) {
+		queueCreateInfos[i].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfos[i].queueFamilyIndex = indices[i];
+		queueCreateInfos[i].queueCount = 1;
+		queueCreateInfos[i].flags = 0;
+		queueCreateInfos[i].pNext = 0;
+		float queuePriority = 1.0f;
+		queueCreateInfos[i].pQueuePriorities = &queuePriority;
+	}
+
+	// Request device features.
+	// TODO: should be config driven
+	VkPhysicalDeviceFeatures deviceFeatures = {};
+	deviceFeatures.samplerAnisotropy = VK_TRUE;
+
+	VkDeviceCreateInfo deviceCreateInfo = { VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO };
+	deviceCreateInfo.queueCreateInfoCount = indexCount;
+	deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+	deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
+	deviceCreateInfo.enabledExtensionCount = 1;
+	const achar* extensionNames = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+	deviceCreateInfo.ppEnabledExtensionNames = &extensionNames;
+
+	deviceCreateInfo.enabledLayerCount = 0;
+	deviceCreateInfo.ppEnabledLayerNames = 0;
+
+	VK_CHECK(vkCreateDevice(
+		physicalDevice,
+		&deviceCreateInfo,
+		allocator,
+		&logicalDevice));
+
+	LOG_INFO("Logical device created.");
+
+	// Get queues.
+	vkGetDeviceQueue(
+		logicalDevice,
+		graphicsQueueIndex,
+		0,
+		&graphicsQueue);
+
+	vkGetDeviceQueue(
+		logicalDevice,
+		presentQueueIndex,
+		0,
+		&presentQueue);
+
+	vkGetDeviceQueue(
+		logicalDevice,
+		transferQueueIndex,
+		0,
+		&transferQueue);
+	LOG_INFO("Queues obtained.");
 
 	return true;
 }
@@ -201,7 +284,7 @@ bool VulkanDevice::PhysicalDeviceMeetsRequirements(VkPhysicalDevice& device, VkS
 					&availableExtensionCount,
 					availableExtensions.data()));
 
-				uint32 required_extension_count =requirements->device_extension_names.size();
+				uint32 required_extension_count = requirements->device_extension_names.size();
 				for (uint32 i = 0; i < required_extension_count; ++i) {
 					bool found = false;
 					for (uint32 j = 0; j < availableExtensionCount; ++j) {
@@ -233,16 +316,16 @@ bool VulkanDevice::PhysicalDeviceMeetsRequirements(VkPhysicalDevice& device, VkS
 	return false;
 }
 
-void VulkanDevice::VulkanDeviceQuerySwapchainSupport(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VulkanSwapchainSupportInfo* outSupportInfo)
+void VulkanDevice::VulkanDeviceQuerySwapchainSupport(VkPhysicalDevice physicalDev, VkSurfaceKHR surface, VulkanSwapchainSupportInfo* outSupportInfo)
 {
 	VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-		physicalDevice,
+		physicalDev,
 		surface,
 		&outSupportInfo->capabilities));
 
 	// Surface formats
 	VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(
-		physicalDevice,
+		physicalDev,
 		surface,
 		&outSupportInfo->formatCount,
 		0));
@@ -252,13 +335,13 @@ void VulkanDevice::VulkanDeviceQuerySwapchainSupport(VkPhysicalDevice physicalDe
 			outSupportInfo->formats.resize(outSupportInfo->formatCount);
 		}
 		VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(
-			physicalDevice,
+			physicalDev,
 			surface,
 			&outSupportInfo->formatCount,
 			outSupportInfo->formats.data()));
 
 		VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(
-			physicalDevice,
+			physicalDev,
 			surface,
 			&outSupportInfo->presentModeCount,
 			0));
@@ -267,7 +350,7 @@ void VulkanDevice::VulkanDeviceQuerySwapchainSupport(VkPhysicalDevice physicalDe
 				outSupportInfo->presentModes.resize(outSupportInfo->presentModeCount);
 			}
 			VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(
-				physicalDevice,
+				physicalDev,
 				surface,
 				&outSupportInfo->presentModeCount,
 				outSupportInfo->presentModes.data()));

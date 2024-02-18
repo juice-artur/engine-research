@@ -24,5 +24,5 @@ private:
 	VkDebugUtilsMessengerEXT debugMessenger;
 #endif
 	VkSurfaceKHR surface;
-	VulkanDevice device;
+	VulkanDevice *device;
 };
