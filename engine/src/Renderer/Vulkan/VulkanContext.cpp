@@ -10,6 +10,9 @@ VulkanContext::VulkanContext()
 
 VulkanContext::~VulkanContext()
 {
+    swapchain.Destroy(*device);
+
+    LOG_TRACE("Destroying Vulkan device...");
     delete device;
     LOG_TRACE("Destroying Vulkan surface...");
     vkDestroySurfaceKHR(instance, surface, allocator);
@@ -128,6 +131,8 @@ bool VulkanContext::Initialize(WindowHandle_t windowHandle)
         LOG_CRITICAL("Device dosen`t create...");
         return false;
     }
+    swapchain.Create(*device, surface, {1280,720});
+
     LOG_INFO("Vulkan renderer initialized successfully.");
     return true;
 }

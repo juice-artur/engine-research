@@ -6,16 +6,23 @@
 class VulkanDevice
 {
 public:
-	bool Create(VkInstance& instance, VkSurfaceKHR& surface, VkAllocationCallbacks& allocator);
-	~VulkanDevice();
 
-private:
-	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-    VkDevice logicalDevice = VK_NULL_HANDLE;
-    VulkanSwapchainSupportInfo swapchainSupport;
     int32 graphicsQueueIndex;
     int32 presentQueueIndex;
     int32 transferQueueIndex;
+    VkDevice logicalDevice = VK_NULL_HANDLE;
+    VkFormat depthFormat;
+	bool Create(VkInstance& instance, VkSurfaceKHR& surface, VkAllocationCallbacks& allocator);
+	~VulkanDevice();
+    VulkanSwapchainSupportInfo GetVulkanSwapchainSupportInfo();
+
+    void VulkanDeviceQuerySwapchainSupport(
+        VkPhysicalDevice physicalDev,
+        VkSurfaceKHR surface,
+        VulkanSwapchainSupportInfo* outSupportInfo);
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+private:
+    VulkanSwapchainSupportInfo swapchainSupport;
 
     VkPhysicalDeviceProperties properties;
     VkPhysicalDeviceFeatures features;
@@ -26,13 +33,10 @@ private:
     VkQueue transferQueue;
 
     VkAllocationCallbacks* allocator;
-
 	bool SelectPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surface);
     bool PhysicalDeviceMeetsRequirements(
         VkPhysicalDevice& device, VkSurfaceKHR& surface, const VkPhysicalDeviceProperties* properties, const VkPhysicalDeviceFeatures* features, VulkanPhysicalDeviceQueueFamilyInfo* queueInfo, const VulkanPhysicalDeviceRequirements* requirements);
 
-    void VulkanDeviceQuerySwapchainSupport(
-        VkPhysicalDevice physicalDev,
-        VkSurfaceKHR surface,
-        VulkanSwapchainSupportInfo* outSupportInfo);
+
+    bool DetectDepthFormat();
 };

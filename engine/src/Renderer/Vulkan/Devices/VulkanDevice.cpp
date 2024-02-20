@@ -9,6 +9,12 @@ bool VulkanDevice::Create(VkInstance& instance, VkSurfaceKHR& surface, VkAllocat
 		return false;
 	}
 	LOG_INFO("Physical device selected.");
+	if (!DetectDepthFormat())
+	{
+		depthFormat = VK_FORMAT_UNDEFINED;
+		LOG_ERROR("Failed to find a supported format!");
+	}
+	
 	return true;
 }
 
@@ -20,6 +26,11 @@ VulkanDevice::~VulkanDevice()
 	if (logicalDevice) {
 		vkDestroyDevice(logicalDevice, allocator);
 	}
+}
+
+VulkanSwapchainSupportInfo VulkanDevice::GetVulkanSwapchainSupportInfo()
+{
+	return swapchainSupport;
 }
 
 bool VulkanDevice::SelectPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surface)
@@ -311,6 +322,32 @@ bool VulkanDevice::PhysicalDeviceMeetsRequirements(VkPhysicalDevice& device, VkS
 		}
 
 		return true;
+	}
+
+	return false;
+}
+
+bool VulkanDevice::DetectDepthFormat()
+{
+	const uint64 candidateCount = 3;
+	VkFormat candidates[3] = {
+		VK_FORMAT_D32_SFLOAT,
+		VK_FORMAT_D32_SFLOAT_S8_UINT,
+		VK_FORMAT_D24_UNORM_S8_UINT };
+
+	uint32 flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
+	for (uint64 i = 0; i < candidateCount; ++i) {
+		VkFormatProperties properties;
+		vkGetPhysicalDeviceFormatProperties(physicalDevice, candidates[i], &properties);
+
+		if ((properties.linearTilingFeatures & flags) == flags) {
+			depthFormat = candidates[i];
+			return true;
+		}
+		else if ((properties.optimalTilingFeatures & flags) == flags) {
+			depthFormat = candidates[i];
+			return true;
+		}
 	}
 
 	return false;

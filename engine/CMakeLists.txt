@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 include_directories(src)
 include_directories($ENV{VULKAN_SDK}/Include)
 
+
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.h)
 
 
@@ -37,6 +38,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${LINKER_FLAGS})
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../external/SDL2/include")
 target_link_libraries(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/../external/SDL2/lib/x64/SDL2.lib"
                                       "${CMAKE_SOURCE_DIR}/../external/SDL2/lib/x64/SDL2main.lib")
+
+add_subdirectory(../external/glm  ${CMAKE_CURRENT_BINARY_DIR}/glm)
+target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
+                                      
 
 add_subdirectory(../external/spdlog  ${CMAKE_CURRENT_BINARY_DIR}/spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
