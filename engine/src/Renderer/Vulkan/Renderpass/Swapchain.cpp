@@ -145,6 +145,11 @@ void Swapchain::Recreate(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2
     Create(device, surface, extend);
 }
 
+VkSurfaceFormatKHR Swapchain::GetImageFormat()
+{
+    return imageFormat;
+}
+
 void Swapchain::Present(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 extend, VkSemaphore renderCompleteSemaphore, uint32 presentImageIndex, VkQueue graphicsQueue,
     VkQueue presentQueue)
 {

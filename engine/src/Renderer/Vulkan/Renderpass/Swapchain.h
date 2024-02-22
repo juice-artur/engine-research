@@ -15,6 +15,7 @@ public:
         VkQueue presentQueue);
     void Recreate(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 extend);
     Swapchain() {};
+VkSurfaceFormatKHR GetImageFormat();
 private:
     VkSurfaceFormatKHR imageFormat;
     uint16 maxFramesInFlight;

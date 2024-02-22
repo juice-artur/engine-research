@@ -1,6 +1,8 @@
 #pragma once
 #include"Core\Log.h"
-
+#include"vector"
+#include "vulkan\vulkan.h"
+#include "Platform\Common\Types.h"
 #define VK_CHECK(x)                                                 \
 	do                                                              \
 	{                                                               \
@@ -36,4 +38,22 @@ struct VulkanSwapchainSupportInfo {
 	std::vector<VkSurfaceFormatKHR> formats;
 	uint32 presentModeCount;
 	std::vector<VkPresentModeKHR> presentModes;
+};
+
+enum class RenderPassState {
+	READY,
+	RECORDING,
+	IN_RENDER_PASS,
+	RECORDING_ENDED,
+	SUBMITTED,
+	NOT_ALLOCATED
+};
+
+enum class CommandBufferState {
+	COMMAND_BUFFER_STATE_READY,
+	COMMAND_BUFFER_STATE_RECORDING,
+	COMMAND_BUFFER_STATE_IN_RENDER_PASS,
+	COMMAND_BUFFER_STATE_RECORDING_ENDED,
+	COMMAND_BUFFER_STATE_SUBMITTED,
+	COMMAND_BUFFER_STATE_NOT_ALLOCATED
 };

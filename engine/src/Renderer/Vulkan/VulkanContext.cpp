@@ -10,6 +10,7 @@ VulkanContext::VulkanContext()
 
 VulkanContext::~VulkanContext()
 {
+   mainRenderpass.Destroy(*device);
     swapchain.Destroy(*device);
 
     LOG_TRACE("Destroying Vulkan device...");
@@ -132,6 +133,8 @@ bool VulkanContext::Initialize(WindowHandle_t windowHandle)
         return false;
     }
     swapchain.Create(*device, surface, {1280,720});
+
+    mainRenderpass.Create(1.0, 0, { 0.0f, 0.0f, 0.2f, 1.0f, }, { 0, 0, 1280,720 }, swapchain, *device);
 
     LOG_INFO("Vulkan renderer initialized successfully.");
     return true;

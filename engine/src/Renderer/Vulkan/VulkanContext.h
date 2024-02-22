@@ -5,6 +5,7 @@
 #include "Devices\VulkanDevice.h"
 #include <glm\ext\vector_int2.hpp>
 #include "Renderpass\Swapchain.h"
+#include "Renderpass\Renderpass.h"
 
 class VulkanContext
 {
@@ -30,7 +31,7 @@ private:
 	Swapchain swapchain;
 	VkSurfaceKHR surface;
 	VulkanDevice *device;
-
+	Renderpass mainRenderpass;
 	glm::ivec2 framebufferSize;
 	uint32 imageIndex;
 
