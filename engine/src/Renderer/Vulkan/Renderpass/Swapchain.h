@@ -15,6 +15,7 @@ public:
         VkQueue presentQueue);
     void Recreate(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 extend);
     Swapchain() {};
+    uint32 GetImageCount();
 VkSurfaceFormatKHR GetImageFormat();
 private:
     VkSurfaceFormatKHR imageFormat;

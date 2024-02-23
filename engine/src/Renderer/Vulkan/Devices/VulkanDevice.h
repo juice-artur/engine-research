@@ -21,6 +21,7 @@ public:
         VkSurfaceKHR surface,
         VulkanSwapchainSupportInfo* outSupportInfo);
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+    VkCommandPool graphicsCommandPool;
 private:
     VulkanSwapchainSupportInfo swapchainSupport;
 

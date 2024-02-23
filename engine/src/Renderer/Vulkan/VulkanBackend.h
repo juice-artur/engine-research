@@ -17,4 +17,5 @@ public:
 
 private:
 	VulkanContext* context;
+	void CreateCommandBuffers();
 };

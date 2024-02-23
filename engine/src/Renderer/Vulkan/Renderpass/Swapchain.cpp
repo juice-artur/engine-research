@@ -145,6 +145,11 @@ void Swapchain::Recreate(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2
     Create(device, surface, extend);
 }
 
+uint32 Swapchain::GetImageCount()
+{
+    return imageCount;
+}
+
 VkSurfaceFormatKHR Swapchain::GetImageFormat()
 {
     return imageFormat;

@@ -21,16 +21,16 @@ public:
 		VkDebugUtilsMessageTypeFlagsEXT message_types,
 		const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
 		void* user_data);
-
+	std::vector<CommandBuffer>  graphicsCommandBuffers;
+	Swapchain swapchain;
+	VulkanDevice* device;
 private:
 	VkInstance instance;
 	VkAllocationCallbacks* allocator;
 #if defined(_DEBUG)
 	VkDebugUtilsMessengerEXT debugMessenger;
 #endif
-	Swapchain swapchain;
 	VkSurfaceKHR surface;
-	VulkanDevice *device;
 	Renderpass mainRenderpass;
 	glm::ivec2 framebufferSize;
 	uint32 imageIndex;

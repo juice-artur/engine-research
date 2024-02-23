@@ -22,6 +22,12 @@ bool VulkanDevice::Create(VkInstance& instance, VkSurfaceKHR& surface, VkAllocat
 
 VulkanDevice::~VulkanDevice()
 {
+	LOG_TRACE("Destroying command pools...");
+	vkDestroyCommandPool(
+		logicalDevice,
+		graphicsCommandPool,
+		allocator);
+
 	LOG_TRACE("Destroying logical device...");
 	if (logicalDevice) {
 		vkDestroyDevice(logicalDevice, allocator);
@@ -200,6 +206,16 @@ bool VulkanDevice::SelectPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surf
 		0,
 		&transferQueue);
 	LOG_INFO("Queues obtained.");
+
+	VkCommandPoolCreateInfo poolCreateInfo = { VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO };
+	poolCreateInfo.queueFamilyIndex = graphicsQueueIndex;
+	poolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	VK_CHECK(vkCreateCommandPool(
+		logicalDevice,
+		&poolCreateInfo,
+		allocator,
+		&graphicsCommandPool));
+	LOG_INFO("Graphics command pool created.");
 
 	return true;
 }
