@@ -174,4 +174,5 @@ void Swapchain::Present(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 
     else if (result != VK_SUCCESS) {
         LOG_CRITICAL("Failed to present swap chain image!");
     }
+    curentFrame = (curentFrame + 1) % maxFramesInFlight;
 }

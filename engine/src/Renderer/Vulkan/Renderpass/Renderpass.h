@@ -17,11 +17,11 @@ public:
 	void Destroy(VulkanDevice& device);
 	void Begin(VkFramebuffer frameBuffer, CommandBuffer* commandBuffer);
 	void End(CommandBuffer* commandBuffer);
+	VkRenderPass handle;
 private:
 	float depth;
 	uint32 stencil;
 	RenderPassState state;
-	VkRenderPass handle;
 	glm::vec4 rgba;
 	glm::vec4 xywh;
 };

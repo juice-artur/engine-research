@@ -16,9 +16,10 @@ public:
         VkImageAspectFlags aspectFlags);
     void Destroy(VulkanDevice& device);
 
-private:
     VkImage handle;
     VkDeviceMemory memory;
     VkImageView view;
+
+private:
     glm::ivec2 extend;
 };

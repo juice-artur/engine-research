@@ -18,4 +18,5 @@ public:
 private:
 	VulkanContext* context;
 	void CreateCommandBuffers();
+	void RegenerateFramebuffers();
 };

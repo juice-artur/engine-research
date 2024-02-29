@@ -6,6 +6,7 @@
 #include <glm\ext\vector_int2.hpp>
 #include "Renderpass\Swapchain.h"
 #include "Renderpass\Renderpass.h"
+#include "Renderpass\Fence.h"
 
 class VulkanContext
 {
@@ -24,14 +25,23 @@ public:
 	std::vector<CommandBuffer>  graphicsCommandBuffers;
 	Swapchain swapchain;
 	VulkanDevice* device;
+	Renderpass mainRenderpass;
+
+	std::vector<VkSemaphore> imageAvailableSemaphores;
+	std::vector <VkSemaphore> queueCompleteSemaphores;
+
+	uint32 inFlightFenceCount;
+	std::vector <Fence> inFlightFences;
+
+	// Holds pointers to fences which exist and are owned elsewhere.
+	std::vector<Fence*> imagesInFlight;
+	VkAllocationCallbacks* allocator;
 private:
 	VkInstance instance;
-	VkAllocationCallbacks* allocator;
 #if defined(_DEBUG)
 	VkDebugUtilsMessengerEXT debugMessenger;
 #endif
 	VkSurfaceKHR surface;
-	Renderpass mainRenderpass;
 	glm::ivec2 framebufferSize;
 	uint32 imageIndex;
 
