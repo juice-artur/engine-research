@@ -32,7 +32,7 @@ VulkanContext::~VulkanContext()
 bool VulkanContext::Initialize(WindowHandle_t windowHandle)
 {
     allocator = nullptr;
-
+    currentFrame = 0;
     // Setup Vulkan instance.
     VkApplicationInfo app_info = { VK_STRUCTURE_TYPE_APPLICATION_INFO };
     app_info.apiVersion = VK_API_VERSION_1_2;

@@ -13,7 +13,7 @@ public:
 	bool AcquireNextImageIndex(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 extend, uint64 timeout, VkSemaphore imageAvailableSemaphore, VkFence fence, uint32* outImageIndex);
 	void Destroy(VulkanDevice& device);
 	void Present(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 extend, VkSemaphore renderCompleteSemaphore, uint32 presentImageIndex, VkQueue graphicsQueue,
-		VkQueue presentQueue);
+		VkQueue presentQueue, uint32& curentFrame);
 	void Recreate(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 extend);
 	Swapchain() {};
 	uint32 GetImageCount();
@@ -21,12 +21,10 @@ public:
 	std::vector <VkImageView> views;
 	std::vector<Framebuffer> framebuffers;
 	Image depthAttachment;
-	uint16 maxFramesInFlight;
+	uint16 maxFramesInFlight = 2;
 	VkSurfaceFormatKHR GetImageFormat();
 private:
 	VkSurfaceFormatKHR imageFormat;
 	VkSwapchainKHR handle;
 	uint32 imageCount;
-	uint32 curentFrame = 0;
-
 };

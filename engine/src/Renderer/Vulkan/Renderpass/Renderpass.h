@@ -18,10 +18,11 @@ public:
 	void Begin(VkFramebuffer frameBuffer, CommandBuffer* commandBuffer);
 	void End(CommandBuffer* commandBuffer);
 	VkRenderPass handle;
-private:
-	float depth;
-	uint32 stencil;
-	RenderPassState state;
 	glm::vec4 rgba;
 	glm::vec4 xywh;
+private:
+	float depth = 0;
+	uint32 stencil;
+	RenderPassState state;
+
 };

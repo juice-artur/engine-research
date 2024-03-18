@@ -22,11 +22,12 @@ public:
 		VkDebugUtilsMessageTypeFlagsEXT message_types,
 		const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
 		void* user_data);
-	std::vector<CommandBuffer>  graphicsCommandBuffers;
+	std::vector<CommandBuffer*>  graphicsCommandBuffers;
 	Swapchain swapchain;
 	VulkanDevice* device;
 	Renderpass mainRenderpass;
-
+	uint32 imageIndex;
+	uint32 currentFrame;
 	std::vector<VkSemaphore> imageAvailableSemaphores;
 	std::vector <VkSemaphore> queueCompleteSemaphores;
 
@@ -36,14 +37,15 @@ public:
 	// Holds pointers to fences which exist and are owned elsewhere.
 	std::vector<Fence*> imagesInFlight;
 	VkAllocationCallbacks* allocator;
+	VkSurfaceKHR surface;
 private:
 	VkInstance instance;
 #if defined(_DEBUG)
 	VkDebugUtilsMessengerEXT debugMessenger;
 #endif
-	VkSurfaceKHR surface;
+
 	glm::ivec2 framebufferSize;
-	uint32 imageIndex;
+
 
 	bool recreatingSwapchain;
 };

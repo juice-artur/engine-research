@@ -5,7 +5,6 @@
 void Swapchain::Create(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 extend)
 {
     VkExtent2D swapchainExtent = { (uint32)extend.x, (uint32)extend.y };
-    maxFramesInFlight = 2;
     bool found = FALSE;
     for (uint32 i = 0; i < device.GetVulkanSwapchainSupportInfo().formatCount; ++i) {
         VkSurfaceFormatKHR format = device.GetVulkanSwapchainSupportInfo().formats[i];
@@ -44,7 +43,7 @@ void Swapchain::Create(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 e
     if (device.GetVulkanSwapchainSupportInfo().capabilities.maxImageCount > 0 && imageCount > device.GetVulkanSwapchainSupportInfo().capabilities.maxImageCount) {
         imageCount = device.GetVulkanSwapchainSupportInfo().capabilities.maxImageCount;
     }
-
+    maxFramesInFlight = imageCount;
     VkSwapchainCreateInfoKHR swapchainCreateInfo = { VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR };
     swapchainCreateInfo.surface = surface;
     swapchainCreateInfo.minImageCount = imageCount;
@@ -156,7 +155,7 @@ VkSurfaceFormatKHR Swapchain::GetImageFormat()
 }
 
 void Swapchain::Present(VulkanDevice& device, VkSurfaceKHR& surface, glm::ivec2 extend, VkSemaphore renderCompleteSemaphore, uint32 presentImageIndex, VkQueue graphicsQueue,
-    VkQueue presentQueue)
+    VkQueue presentQueue, uint32& curentFrame)
 {
     VkPresentInfoKHR presentInfo = { VK_STRUCTURE_TYPE_PRESENT_INFO_KHR };
     presentInfo.waitSemaphoreCount = 1;

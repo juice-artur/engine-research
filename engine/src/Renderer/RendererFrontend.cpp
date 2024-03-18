@@ -17,6 +17,9 @@ bool RendererFrontend::Initialize(const char* applicationName, BaseWindow* windo
 
 bool RendererFrontend::DrawFrame(float deltaTime)
 {
+	renderrerBackend->BeginFrame(deltaTime);
+	renderrerBackend->EndFrame(deltaTime);
+
 	return false;
 }
 

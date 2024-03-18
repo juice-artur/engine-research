@@ -22,6 +22,9 @@ public:
         VulkanSwapchainSupportInfo* outSupportInfo);
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkCommandPool graphicsCommandPool;
+    VkQueue graphicsQueue;
+    VkQueue presentQueue;
+    VkQueue transferQueue;
 private:
     VulkanSwapchainSupportInfo swapchainSupport;
 
@@ -29,9 +32,7 @@ private:
     VkPhysicalDeviceFeatures features;
     VkPhysicalDeviceMemoryProperties memory;
 
-    VkQueue graphicsQueue;
-    VkQueue presentQueue;
-    VkQueue transferQueue;
+
 
     VkAllocationCallbacks* allocator;
 	bool SelectPhysicalDevice(VkInstance& instance, VkSurfaceKHR& surface);
