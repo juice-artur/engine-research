@@ -5,4 +5,4 @@ This repository is rather an example of an unsuccessful attempt to rewrite [Kohi
 
 Also repository contains attempts to implement abstractions over the creation of Window and VulkanSurface
 
-#### Новий код знаходиться в [JuicyEngine](https://github.com/juice-artur/JuicyEngine)
+#### The new code is in [JuicyEngine](https://github.com/juice-artur/JuicyEngine)
